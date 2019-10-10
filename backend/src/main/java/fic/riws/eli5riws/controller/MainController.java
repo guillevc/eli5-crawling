@@ -1,17 +1,17 @@
 package fic.riws.eli5riws.controller;
 
-import lombok.extern.slf4j.Slf4j;
-import java.util.List;
-
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import com.google.common.io.Files;
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 import fic.riws.eli5riws.Crawler;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("${app.api.base-url}")
@@ -25,7 +25,7 @@ public class MainController {
     }
 
     public static void main(String[] args) throws Exception {
-        String crawlStorageFolder = "/Users/luisin/data";
+        String crawlStorageFolder = Files.createTempDir().getAbsolutePath();
         int numberOfCrawlers = 4;
 
         CrawlConfig config = new CrawlConfig();

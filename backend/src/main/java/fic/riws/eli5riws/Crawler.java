@@ -1,12 +1,14 @@
 package fic.riws.eli5riws;
 
-import java.util.Set;
-import java.util.regex.Pattern;
-
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import java.util.Set;
+import java.util.regex.Pattern;
 
 public class Crawler extends WebCrawler {
 
@@ -60,9 +62,11 @@ public class Crawler extends WebCrawler {
             String html = htmlParseData.getHtml();
             Set<WebURL> links = htmlParseData.getOutgoingUrls();
 
-            System.out.println("Text length: " + text.length());
-            System.out.println("Html length: " + html.length());
-            System.out.println("Number of outgoing links: " + links.size());
+//            System.out.println("Text length: " + text.length());
+//            System.out.println("Html length: " + html.length());
+//            System.out.println("Number of outgoing links: " + links.size());
+
+            Document doc = Jsoup.parse(html);
         }
     }
 }
