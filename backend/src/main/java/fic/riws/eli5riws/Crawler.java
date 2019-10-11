@@ -23,6 +23,9 @@ public class Crawler extends WebCrawler {
             "|xml|txt|java|c|cpp|exe" +
             "))$");
 
+    private final static Pattern VALID_URLS = Pattern.compile("https://old.reddit.com/r/explainlikeimfive/comments/\\w{6}/eli5.[^/]*/$" +
+        "|https://old.reddit.com/r/explainlikeimfive/top/\\?sort=top&t=all.*");
+
     /**
      * Creates a new crawler instance.
      */
@@ -42,9 +45,7 @@ public class Crawler extends WebCrawler {
      @Override
      public boolean shouldVisit(Page referringPage, WebURL url) {
          String href = url.getURL().toLowerCase();
-         return !FILTERS.matcher(href).matches()
-                && (href.startsWith("https://old.reddit.com/r/explainlikeimfive/top/")              
-                || href.startsWith("https://old.reddit.com/r/explainlikeimfive/comments/"));  
+         return (VALID_URLS.matcher(href).matches())&& (!FILTERS.matcher(href).matches());  
      }
 
      /**
@@ -66,7 +67,7 @@ public class Crawler extends WebCrawler {
 //            System.out.println("Html length: " + html.length());
 //            System.out.println("Number of outgoing links: " + links.size());
 
-            Document doc = Jsoup.parse(html);
+            // Document doc = Jsoup.parse(html);
         }
     }
 }
