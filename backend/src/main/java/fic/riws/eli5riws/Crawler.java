@@ -4,11 +4,16 @@ import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
+import fic.riws.eli5riws.dto.RedditPost;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
-import java.util.Set;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
+import java.util.List;
 
 public class Crawler extends WebCrawler {
 
@@ -57,17 +62,32 @@ public class Crawler extends WebCrawler {
 		String url = page.getWebURL().getURL();
         System.out.println("URL: " + url);
 
-        if (page.getParseData() instanceof HtmlParseData) {
+        if (page.getParseData() instanceof HtmlParseData 
+                && url.contains("/comments/")) {
             HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
-            String text = htmlParseData.getText();
+            //String text = htmlParseData.getText();
             String html = htmlParseData.getHtml();
-            Set<WebURL> links = htmlParseData.getOutgoingUrls();
+            //Set<WebURL> links = htmlParseData.getOutgoingUrls();
 
-//            System.out.println("Text length: " + text.length());
-//            System.out.println("Html length: " + html.length());
-//            System.out.println("Number of outgoing links: " + links.size());
+            String category;
+            String question;
+            List<String> responses = new ArrayList<>();
 
-            // Document doc = Jsoup.parse(html);
+            Document doc = Jsoup.parse(html);
+
+            Element questionTitleElement = doc.select("p.title a.title").first();
+            question = questionTitleElement.text();
+
+            Element questionCategoryElement = doc.select("p.title span.linkflairlabel").first();
+            category = questionCategoryElement.text();
+
+            //Elements questionResponses = doc.select("   ");
+                    
+
+            String response;
+
+            RedditPost redditPost = new RedditPost(category, question, responses);
+            System.out.println(redditPost);
         }
     }
 }

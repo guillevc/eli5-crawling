@@ -26,10 +26,11 @@ public class MainController {
 
     public static void main(String[] args) throws Exception {
         String crawlStorageFolder = Files.createTempDir().getAbsolutePath();
-        int numberOfCrawlers = 4;
+        int numberOfCrawlers = 1;
 
         CrawlConfig config = new CrawlConfig();
         config.setCrawlStorageFolder(crawlStorageFolder);
+        config.setUserAgentString("Subdesarrolladores");
 
         // Instantiate the controller for this crawl.
         PageFetcher pageFetcher = new PageFetcher(config);
