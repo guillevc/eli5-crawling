@@ -5,15 +5,15 @@ import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
 import fic.riws.eli5riws.dto.RedditPost;
-
+import fic.riws.eli5riws.dto.RedditResponse;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
-import java.util.regex.Pattern;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class Crawler extends WebCrawler {
 
@@ -71,7 +71,7 @@ public class Crawler extends WebCrawler {
 
             String category;
             String question;
-            List<String> responses = new ArrayList<>();
+            List<RedditResponse> responses = new ArrayList<>();
 
             Document doc = Jsoup.parse(html);
 
@@ -81,12 +81,21 @@ public class Crawler extends WebCrawler {
             Element questionCategoryElement = doc.select("p.title span.linkflairlabel").first();
             category = questionCategoryElement.text();
 
-            //Elements questionResponses = doc.select("   ");
-                    
+            Elements questionResponses = doc.select(".commentarea > .sitetable > .comment > .entry");
+            for (Element el : questionResponses) {
+                String text = el.select(".usertext-body p").text();
+                if (!text.equals("[deleted]") && !text.equals("[removed]")) {
+                    Integer karma;
+                    try {
+                        karma = Integer.parseInt(el.select(".score.unvoted").attr("title"));
+                    } catch (NumberFormatException e) {
+                        karma = null;
+                    }
+                    responses.add(new RedditResponse(text, karma));
+                }
+            }
 
-            String response;
-
-            RedditPost redditPost = new RedditPost(category, question, responses);
+            RedditPost redditPost = new RedditPost(category, question, responses, 0); // todo: karma del post
             System.out.println(redditPost);
         }
     }
