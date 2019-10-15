@@ -1,4 +1,4 @@
-package fic.riws.eli5riws;
+package fic.riws.eli5riws.crawler;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
@@ -6,6 +6,7 @@ import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
 import fic.riws.eli5riws.dto.RedditPost;
 import fic.riws.eli5riws.dto.RedditResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+@Slf4j
 public class Crawler extends WebCrawler {
 
     private final static Pattern FILTERS = Pattern.compile(".*(\\.(" +
@@ -29,7 +31,7 @@ public class Crawler extends WebCrawler {
             "))$");
 
     private final static Pattern VALID_URLS = Pattern.compile("https://old.reddit.com/r/explainlikeimfive/comments/\\w{6}/eli5.[^/]*/$" +
-        "|https://old.reddit.com/r/explainlikeimfive/top/\\?sort=top&t=all.*");
+            "|https://old.reddit.com/r/explainlikeimfive/top/\\?sort=top&t=all.*");
 
     /**
      * Creates a new crawler instance.
@@ -47,22 +49,22 @@ public class Crawler extends WebCrawler {
      * with "https://www.reddit.com/r/explainlikeimfive/top/?t=all". In this case, we didn't need the
      * referringPage parameter to make the decision.
      */
-     @Override
-     public boolean shouldVisit(Page referringPage, WebURL url) {
-         String href = url.getURL().toLowerCase();
-         return (VALID_URLS.matcher(href).matches())&& (!FILTERS.matcher(href).matches());  
-     }
+    @Override
+    public boolean shouldVisit(Page referringPage, WebURL url) {
+        String href = url.getURL().toLowerCase();
+        return (VALID_URLS.matcher(href).matches()) && (!FILTERS.matcher(href).matches());
+    }
 
-     /**
-      * This function is called when a page is fetched and ready
-      * to be processed by your program.
-      */
-     @Override
-     public void visit(Page page) {
-		String url = page.getWebURL().getURL();
+    /**
+     * This function is called when a page is fetched and ready
+     * to be processed by your program.
+     */
+    @Override
+    public void visit(Page page) {
+        String url = page.getWebURL().getURL();
         System.out.println("URL: " + url);
 
-        if (page.getParseData() instanceof HtmlParseData 
+        if (page.getParseData() instanceof HtmlParseData
                 && url.contains("/comments/")) {
             HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
             //String text = htmlParseData.getText();
@@ -84,7 +86,7 @@ public class Crawler extends WebCrawler {
             Elements questionResponses = doc.select(".commentarea > .sitetable > .comment > .entry");
             for (Element el : questionResponses) {
                 String text = el.select(".usertext-body p").text();
-                if (!text.equals("[deleted]") && !text.equals("[removed]")) {
+                if (!text.equals("[deleted]") && !text.equals("[removed]")) { // TODO filtrar comentarios de moderadores (sticked)
                     Integer karma;
                     try {
                         karma = Integer.parseInt(el.select(".score.unvoted").attr("title"));
@@ -95,8 +97,8 @@ public class Crawler extends WebCrawler {
                 }
             }
 
-            RedditPost redditPost = new RedditPost(category, question, responses, 0); // todo: karma del post
-            System.out.println(redditPost);
+            RedditPost redditPost = new RedditPost(category, question, responses, 0); // todo karma del post
+            log.info(redditPost.toString());
         }
     }
 }
