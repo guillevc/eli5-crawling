@@ -1,23 +1,26 @@
 package fic.riws.eli5riws.crawler;
 
-import edu.uci.ics.crawler4j.crawler.Page;
-import edu.uci.ics.crawler4j.crawler.WebCrawler;
-import edu.uci.ics.crawler4j.parser.HtmlParseData;
-import edu.uci.ics.crawler4j.url.WebURL;
-import fic.riws.eli5riws.dto.RedditPost;
-import fic.riws.eli5riws.dto.RedditResponse;
-import lombok.extern.slf4j.Slf4j;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
+import edu.uci.ics.crawler4j.crawler.Page;
+import edu.uci.ics.crawler4j.crawler.WebCrawler;
+import edu.uci.ics.crawler4j.parser.HtmlParseData;
+import edu.uci.ics.crawler4j.url.WebURL;
+import fic.riws.eli5riws.dto.RedditResponse;
+import fic.riws.eli5riws.model.Question;
+import fic.riws.eli5riws.service.QuestionService;
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
-public class Crawler extends WebCrawler {
+public final class Crawler extends WebCrawler {
+    
+    private static QuestionService questionService;
 
     private final static Pattern FILTERS = Pattern.compile(".*(\\.(" +
             "css|js" +
@@ -32,6 +35,10 @@ public class Crawler extends WebCrawler {
 
     private final static Pattern VALID_URLS = Pattern.compile("https://old.reddit.com/r/explainlikeimfive/comments/\\w{6}/eli5.[^/]*/$" +
             "|https://old.reddit.com/r/explainlikeimfive/top/\\?sort=top&t=all.*");
+
+    public static void setQuestionsService(QuestionService questionService) {
+        Crawler.questionService = questionService;
+    }
 
     /**
      * Creates a new crawler instance.
@@ -83,10 +90,10 @@ public class Crawler extends WebCrawler {
             Element questionCategoryElement = doc.select("p.title span.linkflairlabel").first();
             category = questionCategoryElement.text();
 
-            Elements questionResponses = doc.select(".commentarea > .sitetable > .comment > .entry");
+            /*Elements questionResponses = doc.select(".commentarea > .sitetable > .comment > .entry");
             for (Element el : questionResponses) {
                 String text = el.select(".usertext-body p").text();
-                if (!text.equals("[deleted]") && !text.equals("[removed]")) { // TODO filtrar comentarios de moderadores (sticked)
+                if (!text.equals("[deleted]") && !text.equals("[removed]")) { // TODO: filtrar comentarios de moderadores (sticked)
                     Integer karma;
                     try {
                         karma = Integer.parseInt(el.select(".score.unvoted").attr("title"));
@@ -95,10 +102,18 @@ public class Crawler extends WebCrawler {
                     }
                     responses.add(new RedditResponse(text, karma));
                 }
-            }
+            }*/
 
-            RedditPost redditPost = new RedditPost(category, question, responses, 0); // todo karma del post
-            log.info(redditPost.toString());
+            //RedditPost redditPost = new RedditPost(category, question, responses, 0); // TODO: karma del post
+            Question q = new Question(url.substring(url.indexOf("comments/") + 9, url.indexOf("comments/") + 15), question, category);
+            try{
+                // TODO: SOLUCIONAR REFERENCIA NULA AL INICIAR EL CRAWLER (QUESTION SERVICE NO SE INYECTA)
+                q = questionService.save(q);
+                log.info("Stored -> " + q.toString());
+            }
+            catch (Exception e){
+                System.out.println("Imposible to store!!!");
+            }
         }
     }
 }

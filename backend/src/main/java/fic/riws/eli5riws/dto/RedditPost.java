@@ -5,7 +5,8 @@ import lombok.Data;
 
 import java.util.List;
 
-@Data @AllArgsConstructor
+@Data 
+@AllArgsConstructor
 public class RedditPost {
     private String category;
     private String question;

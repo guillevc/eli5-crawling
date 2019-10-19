@@ -1,13 +1,14 @@
 package fic.riws.eli5riws.crawler;
 
+import java.util.List;
+
 import com.google.common.io.Files;
+
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
-
-import java.util.List;
 
 public class CrawlerLauncher {
 
@@ -17,6 +18,8 @@ public class CrawlerLauncher {
 
         CrawlConfig config = new CrawlConfig();
         config.setCrawlStorageFolder(crawlStorageFolder);
+        config.setMaxDepthOfCrawling(3);
+        config.setMaxPagesToFetch(500);
         config.setUserAgentString("Subdesarrolladores");
 
         // Instantiate the controller for this crawl.
@@ -36,8 +39,12 @@ public class CrawlerLauncher {
 
         // Start the crawl. This is a blocking operation, meaning that your code
         // will reach the line after this only when crawling is finished.
-        controller.start(factory, numberOfCrawlers);
-
+        
+        controller.startNonBlocking(factory, numberOfCrawlers);
+        
+        //controller.waitUntilFinish();
+        
+        System.out.println("DONE!");
         List<Object> objects = controller.getCrawlersLocalData();
 
     }
