@@ -1,13 +1,5 @@
 package fic.riws.eli5riws.crawler;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
@@ -16,6 +8,13 @@ import fic.riws.eli5riws.dto.RedditResponse;
 import fic.riws.eli5riws.model.Question;
 import fic.riws.eli5riws.service.QuestionService;
 import lombok.extern.slf4j.Slf4j;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 @Slf4j
 public final class Crawler extends WebCrawler {
@@ -113,6 +112,7 @@ public final class Crawler extends WebCrawler {
             }
             catch (Exception e){
                 System.out.println("Imposible to store!!!");
+                e.printStackTrace();
             }
         }
     }

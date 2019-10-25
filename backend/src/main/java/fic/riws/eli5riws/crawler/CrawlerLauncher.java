@@ -1,20 +1,19 @@
 package fic.riws.eli5riws.crawler;
 
-import java.util.List;
-
 import com.google.common.io.Files;
-
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
 import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
+import java.util.List;
+
 public class CrawlerLauncher {
 
     public static void main(String[] args) throws Exception {
         String crawlStorageFolder = Files.createTempDir().getAbsolutePath();
-        int numberOfCrawlers = 1;
+        int numberOfCrawlers = 3;
 
         CrawlConfig config = new CrawlConfig();
         config.setCrawlStorageFolder(crawlStorageFolder);
