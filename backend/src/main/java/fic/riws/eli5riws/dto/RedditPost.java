@@ -5,11 +5,12 @@ import lombok.Data;
 
 import java.util.List;
 
+import fic.riws.eli5riws.model.Answer;
+import fic.riws.eli5riws.model.Question;
+
 @Data 
 @AllArgsConstructor
 public class RedditPost {
-    private String category;
-    private String question;
-    private List<RedditResponse> responses;
-    private Integer karma;
+    private Question question;
+    private List<Answer> responses;
 }

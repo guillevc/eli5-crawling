@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Document(indexName = "eli5")
+@Document(indexName = "eli5-question", type = "question")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,15 +18,6 @@ public class Question {
     private String id;
     private String text;
     private String category;
-//    private Integer karma;
-
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id='" + id + '\'' +
-                ", text='" + text + '\'' +
-                ", category='" + category + '\'' +
-                '}';
-    }
+    private Integer karma;
 
 }

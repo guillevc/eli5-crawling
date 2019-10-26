@@ -7,18 +7,16 @@ import edu.uci.ics.crawler4j.fetcher.PageFetcher;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtConfig;
 import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
-import java.util.List;
-
 public class CrawlerLauncher {
 
     public static void main(String[] args) throws Exception {
         String crawlStorageFolder = Files.createTempDir().getAbsolutePath();
-        int numberOfCrawlers = 3;
+        int numberOfCrawlers = 4;
 
         CrawlConfig config = new CrawlConfig();
         config.setCrawlStorageFolder(crawlStorageFolder);
-        config.setMaxDepthOfCrawling(3);
-        config.setMaxPagesToFetch(500);
+        config.setMaxDepthOfCrawling(4);
+        config.setMaxPagesToFetch(800);
         config.setUserAgentString("Subdesarrolladores");
 
         // Instantiate the controller for this crawl.
@@ -42,9 +40,7 @@ public class CrawlerLauncher {
         controller.startNonBlocking(factory, numberOfCrawlers);
         
         //controller.waitUntilFinish();
-        
-        System.out.println("DONE!");
-        List<Object> objects = controller.getCrawlersLocalData();
+        controller.getCrawlersLocalData();
 
     }
 

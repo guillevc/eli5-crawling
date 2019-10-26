@@ -4,13 +4,15 @@ import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
 import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
-import fic.riws.eli5riws.dto.RedditResponse;
+import fic.riws.eli5riws.model.Answer;
 import fic.riws.eli5riws.model.Question;
+import fic.riws.eli5riws.service.AnswerService;
 import fic.riws.eli5riws.service.QuestionService;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,8 @@ import java.util.regex.Pattern;
 public final class Crawler extends WebCrawler {
     
     private static QuestionService questionService;
+
+    private static AnswerService answerService;
 
     private final static Pattern FILTERS = Pattern.compile(".*(\\.(" +
             "css|js" +
@@ -35,8 +39,12 @@ public final class Crawler extends WebCrawler {
     private final static Pattern VALID_URLS = Pattern.compile("https://old.reddit.com/r/explainlikeimfive/comments/\\w{6}/eli5.[^/]*/$" +
             "|https://old.reddit.com/r/explainlikeimfive/top/\\?sort=top&t=all.*");
 
-    public static void setQuestionsService(QuestionService questionService) {
+    public static void setQuestionService(QuestionService questionService) {
         Crawler.questionService = questionService;
+    }
+
+    public static void setAnswerService(AnswerService answerService) {
+        Crawler.answerService = answerService;
     }
 
     /**
@@ -58,7 +66,8 @@ public final class Crawler extends WebCrawler {
     @Override
     public boolean shouldVisit(Page referringPage, WebURL url) {
         String href = url.getURL().toLowerCase();
-        return (VALID_URLS.matcher(href).matches()) && (!FILTERS.matcher(href).matches());
+        return (VALID_URLS.matcher(href).matches()) && (!FILTERS.matcher(href).matches()
+            && !questionService.exists(href.substring(href.indexOf("comments/") + 9, href.indexOf("comments/") + 15)));
     }
 
     /**
@@ -68,50 +77,64 @@ public final class Crawler extends WebCrawler {
     @Override
     public void visit(Page page) {
         String url = page.getWebURL().getURL();
-        System.out.println("URL: " + url);
+        log.info("URL: " + url);
 
-        if (page.getParseData() instanceof HtmlParseData
-                && url.contains("/comments/")) {
+        if (page.getParseData() instanceof HtmlParseData && url.contains("/comments/")) {
             HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
-            //String text = htmlParseData.getText();
+
+            /* Obtenemos el html de la página y lo parseamos */
             String html = htmlParseData.getHtml();
-            //Set<WebURL> links = htmlParseData.getOutgoingUrls();
-
-            String category;
-            String question;
-            List<RedditResponse> responses = new ArrayList<>();
-
             Document doc = Jsoup.parse(html);
 
-            Element questionTitleElement = doc.select("p.title a.title").first();
-            question = questionTitleElement.text();
-
-            Element questionCategoryElement = doc.select("p.title span.linkflairlabel").first();
-            category = questionCategoryElement.text();
-
-            /*Elements questionResponses = doc.select(".commentarea > .sitetable > .comment > .entry");
-            for (Element el : questionResponses) {
-                String text = el.select(".usertext-body p").text();
-                if (!text.equals("[deleted]") && !text.equals("[removed]")) { // TODO: filtrar comentarios de moderadores (sticked)
-                    Integer karma;
-                    try {
-                        karma = Integer.parseInt(el.select(".score.unvoted").attr("title"));
-                    } catch (NumberFormatException e) {
-                        karma = null;
-                    }
-                    responses.add(new RedditResponse(text, karma));
-                }
-            }*/
-
-            //RedditPost redditPost = new RedditPost(category, question, responses, 0); // TODO: karma del post
-            Question q = new Question(url.substring(url.indexOf("comments/") + 9, url.indexOf("comments/") + 15), question, category);
             try{
-                // TODO: SOLUCIONAR REFERENCIA NULA AL INICIAR EL CRAWLER (QUESTION SERVICE NO SE INYECTA)
+                /* Para cada pregunta averigüamos el texto, categoría, karma y respuestas */
+                Element questionTitleElement = doc.select("p.title a.title").first(); 
+                Element questionCategoryElement = doc.select("p.title span.linkflairlabel").first();
+                Element questionKarmaElement = doc.select(".score.unvoted").first();
+
+                String questionText = questionTitleElement.text();
+                String questionCategory = questionCategoryElement.text();
+                Integer questionKarma;
+
+                try {
+                    questionKarma = Integer.parseInt(questionKarmaElement.attr("title"));
+                } catch (NumberFormatException e) {
+                    questionKarma = null;
+                }
+                Question q = new Question(url.substring(url.indexOf("comments/") + 9, url.indexOf("comments/") + 15), 
+                    questionText, questionCategory, questionKarma);
                 q = questionService.save(q);
-                log.info("Stored -> " + q.toString());
+                // log.info("Question stored -> " + q.toString());
+                List<Answer> answers = new ArrayList<Answer>();
+                Elements questionResponses = doc.select(".commentarea > .sitetable > .comment > .entry");
+
+                for (Element el : questionResponses) {
+                    String answerHref = el.select("a.bylink").attr("href");
+
+                    try {
+                        String answerId = answerHref.substring(answerHref.length() - 8, answerHref.length() - 1);
+                        String answerText = el.select(".usertext-body p").text();
+                        if (!answerText.equals("[deleted]") && !answerText.equals("[removed]") && el.select("a.moderator") != null) { 
+                            // TODO: filtrar comentarios de moderadores (sticked) la condición no funciona ^
+                            Integer answerKarma;
+                            try {
+                                answerKarma = Integer.parseInt(el.select(".score.unvoted").attr("title"));
+                            } catch (NumberFormatException e) {
+                                answerKarma = null;
+                            }
+                            // log.info("Answer added!");
+                            answers.add(new Answer(answerId, answerText, answerKarma, q.getId()));
+                        }
+                    } catch (StringIndexOutOfBoundsException e){
+                        // log.info("Answer not added! " + answerHref);
+                        continue;
+                    }
+                }
+                answerService.saveAll(answers);
+                // log.info("Answers added!");
             }
             catch (Exception e){
-                System.out.println("Imposible to store!!!");
+                // log.info("Imposible to store!!!");
                 e.printStackTrace();
             }
         }

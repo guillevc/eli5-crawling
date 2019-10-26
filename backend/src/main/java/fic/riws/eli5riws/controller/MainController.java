@@ -32,12 +32,7 @@ public class MainController {
 
     @RequestMapping(path = "list")
     public List<RedditPost> list() {
-        return questionService.findAllQuestions();
-    }
-
-    @RequestMapping(path = "test")
-    public void test() {
-        questionService.test();
+        return questionService.findAll();
     }
 
 }
