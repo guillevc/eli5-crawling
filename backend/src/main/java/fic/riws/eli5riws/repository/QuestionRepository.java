@@ -11,4 +11,6 @@ import fic.riws.eli5riws.model.Question;
 public interface QuestionRepository extends ElasticsearchRepository<Question, String> {
 
     public List<Question> findAll();
+
+    //public List<Question> findByCategoryAndTextLike(String category, String text);
 }

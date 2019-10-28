@@ -106,7 +106,7 @@ public final class Crawler extends WebCrawler {
                 q = questionService.save(q);
                 // log.info("Question stored -> " + q.toString());
                 List<Answer> answers = new ArrayList<Answer>();
-                Elements questionResponses = doc.select(".commentarea > .sitetable > .comment > .entry");
+                Elements questionResponses = doc.select(".commentarea > .sitetable > .comment:not(.stickied) > .entry");
 
                 for (Element el : questionResponses) {
                     String answerHref = el.select("a.bylink").attr("href");
@@ -114,8 +114,7 @@ public final class Crawler extends WebCrawler {
                     try {
                         String answerId = answerHref.substring(answerHref.length() - 8, answerHref.length() - 1);
                         String answerText = el.select(".usertext-body p").text();
-                        if (!answerText.equals("[deleted]") && !answerText.equals("[removed]") && el.select("a.moderator") != null) { 
-                            // TODO: filtrar comentarios de moderadores (sticked) la condición no funciona ^
+                        if (!answerText.equals("[deleted]") && !answerText.equals("[removed]")) { 
                             Integer answerKarma;
                             try {
                                 answerKarma = Integer.parseInt(el.select(".score.unvoted").attr("title"));
