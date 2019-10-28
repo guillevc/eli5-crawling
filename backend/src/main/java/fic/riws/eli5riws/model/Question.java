@@ -2,6 +2,7 @@ package fic.riws.eli5riws.model;
 
 import javax.persistence.Id;
 
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
@@ -18,7 +19,7 @@ public class Question {
 
     @Id
     private String id;
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Text, analyzer = "english")
     private String text;
     @Field(type = FieldType.Keyword)
     private String category;
