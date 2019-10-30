@@ -1,14 +1,26 @@
 <template>
   <div class="section">
     <div class="container">
-      <div class="search">
+      <div class="wrapper">
+        <figure class="image">
+          <router-link :to="{name: 'home'}">
+            <img src="explainlikeimfive.png">
+          </router-link>
+        </figure>
         <div class="field has-addons has-addons-centered">
           <p class="control">
             <span class="select">
               <select>
-                <option>Asadassa</option>
-                <option>Basdasd</option>
-                <option>Casasdasdsa</option>
+                <option>All categories</option>
+                <option>Mathematics</option>
+                <option>Economics</option>
+                <option>Culture</option>
+                <option>Biology</option>
+                <option>Chemistry</option>
+                <option>Physics</option>
+                <option>Technology</option>
+                <option>Engineering</option>
+                <option>Other</option>
               </select>
             </span>
           </p>
@@ -33,4 +45,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.section, .container, .wrapper {
+  height: 100%;
+}
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.image {
+  max-width: 400px;
+}
+
+.field {
+  min-width: 60%;
+}
+
 </style>

@@ -3,23 +3,27 @@
 @import url('https://fonts.googleapis.com/css?family=Nunito:400,700');
 
 // Set your brand colors
-/*$purple: #8A4D76;
-$pink: #FA7C91;
-$brown: #757763;
-$beige-light: #D0D1CD;*/
-$beige-lighter: #EFF0EB;
+$blue-brand: #586BA4;
+$orange-brand: #E07A5F;
+$white-brand: #FFFFFF;
+$black-lighter-brand: #211A1D;
+$black-brand: #080705;
+$beige-light-brand: #D0D1CD;
+$beige-lighter-brand: #EFF0EB;
+$baby-powder-brand: #FFFFFA;
+$gaingsboro-brand: #E0E2DB;
 
 // Update Bulma's global variables
 $family-sans-serif: "Nunito", sans-serif;
-/*$grey-dark: $brown;
-$grey-light: $beige-light;
-$primary: $purple;
-$link: $pink;*/
-$widescreen-enabled: false;
-$fullhd-enabled: false;
+$grey-dark: $black-lighter-brand;
+$grey-light: $beige-light-brand;
+$primary: $orange-brand;
+$link: $blue-brand;
+//$widescreen-enabled: false;
+//$fullhd-enabled: false;
 
 // Update some of Bulma's component variables
-$body-background-color: $beige-lighter;
+$body-background-color: lighten($gaingsboro-brand, 5%);
 // $control-border-width: 2px;
 // $input-border-color: transparent;
 $input-shadow: none;
