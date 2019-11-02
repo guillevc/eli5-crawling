@@ -4,33 +4,25 @@
       <div class="wrapper">
         <figure class="image">
           <router-link :to="{name: 'home'}">
-            <img src="explainlikeimfive.png">
+            <img src="../assets/explainlikeimfive.png">
           </router-link>
         </figure>
         <div class="field has-addons has-addons-centered">
           <p class="control">
             <span class="select">
-              <select>
-                <option>All categories</option>
-                <option>Mathematics</option>
-                <option>Economics</option>
-                <option>Culture</option>
-                <option>Biology</option>
-                <option>Chemistry</option>
-                <option>Physics</option>
-                <option>Technology</option>
-                <option>Engineering</option>
-                <option>Other</option>
+              <select v-model="category">
+                <option value=''>All categories</option>
+                <option v-for="(value, key) in categories" :key="key" :value="key">{{value.name}}</option>
               </select>
             </span>
           </p>
           <p class="control is-expanded">
-            <input class="input" type="text" placeholder="Ask a question">
+            <input v-model="searchQuery" class="input" type="text" placeholder="Ask a question">
           </p>
           <p class="control">
-            <a class="button is-primary">
+            <router-link :to="{name: 'search', query: { q: searchQuery, c: category }}" class="button is-primary">
               Search
-            </a>
+            </router-link>
           </p>
         </div>
       </div>
@@ -39,12 +31,21 @@
 </template>
 
 <script>
+import categories from '../model/categories';
+
 export default {
-  name: 'Home'
+  name: 'Home',
+  data: () => ({
+    categories,
+    searchQuery: '',
+    category: '',
+  })
 };
 </script>
 
 <style lang="scss" scoped>
+@import '@/scss/custom.scss';
+
 .section, .container, .wrapper {
   height: 100%;
 }
@@ -53,14 +54,16 @@ export default {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  padding-bottom: 100px;
 }
 
 .image {
   max-width: 400px;
+  margin-bottom: 20px;
 }
 
 .field {
-  min-width: 60%;
+  min-width: 65%;
+  margin: 0 auto;
 }
-
 </style>

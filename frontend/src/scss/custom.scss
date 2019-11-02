@@ -14,13 +14,14 @@ $baby-powder-brand: #FFFFFA;
 $gaingsboro-brand: #E0E2DB;
 
 // Update Bulma's global variables
-$family-sans-serif: "Nunito", sans-serif;
+$family-sans-serif: 'Nunito', sans-serif;
 $grey-dark: $black-lighter-brand;
 $grey-light: $beige-light-brand;
 $primary: $orange-brand;
 $link: $blue-brand;
 //$widescreen-enabled: false;
-//$fullhd-enabled: false;
+$fullhd-enabled: false;
+$footer-padding: 2.5rem 1.5rem 3rem;
 
 // Update some of Bulma's component variables
 $body-background-color: lighten($gaingsboro-brand, 5%);
@@ -28,5 +29,14 @@ $body-background-color: lighten($gaingsboro-brand, 5%);
 // $input-border-color: transparent;
 $input-shadow: none;
 $section-padding: 1.5rem 1.5rem; // default: 3rem 1.5rem
+
+//Adding custom colors
+@import '~bulma/sass/utilities/functions.sass';
+$orange: #ff8606;
+$orange-invert: findColorInvert($orange);
+$purple: lighten(#804d7e, 11%);
+$purple-invert: findColorInvert($purple);
+$custom-colors: ('orange': ($orange, $orange-invert), 'purple': ($purple, $purple-invert));
+
 
 @import '~bulma/bulma';

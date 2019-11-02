@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div class="content">
+    <div class="app-content">
       <router-view/>
     </div>
     <footer class="footer">
@@ -25,7 +25,7 @@ body, #app {
   flex-direction: column;
 }
 
-.content {
+.app-content {
   flex: 1 0 auto;
 }
 

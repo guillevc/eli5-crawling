@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Home from './components/Home.vue';
+import Search from './components/Search.vue';
 
 Vue.use(Router);
 
@@ -11,8 +12,14 @@ export default new Router({
     {
       path: '/',
       name: 'home',
-      component: Home,
+      component: Home
     },
+    {
+      path: '/search',
+      name: 'search',
+      component: Search,
+      props: route => ({ query: route.query.q, category: route.query.c })
+    }
     // {
     //   path: '/about',
     //   name: 'about',
