@@ -5,6 +5,7 @@
         <SearchInput
           class="search-input"
           :searchQuery="searchQuery"
+          :category="category"
           @submit="onSearchSubmit">
         </SearchInput>
       </div>
