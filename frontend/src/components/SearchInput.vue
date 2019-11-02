@@ -1,27 +1,30 @@
 <template>
-  <div class="field has-addons has-addons-centered">
+  <form class="field has-addons has-addons-centered"
+      @submit.prevent="$emit('submit', mySearchQuery, myCategory)">
     <p class="control">
       <span class="select">
-        <select v-model="category">
+        <select v-model="myCategory">
           <option value=''>All categories</option>
           <option v-for="(value, key) in categories" :key="key" :value="key">{{value.name}}</option>
         </select>
       </span>
     </p>
     <p class="control is-expanded">
-      <input v-model="searchQuery" class="input" type="text" placeholder="Ask a question">
+      <input v-model="mySearchQuery" class="input" type="text" placeholder="Ask a question">
     </p>
     <p class="control">
-      <a class="button is-primary">Search</a>
+      <button type="submit" class="button is-primary">
+        Search
+      </button>
     </p>
-  </div>
+  </form>
 </template>
 
 <script>
 import categories from '../model/categories';
 
 export default {
-  name: 'Home',
+  name: 'SearchInput',
   props: {
     category: {
       type: String,
@@ -32,9 +35,13 @@ export default {
       default: ''
     }
   },
-  data: () => ({
-    categories
-  })
+  data() {
+    return {
+      myCategory: this.category,
+      mySearchQuery: this.searchQuery,
+      categories
+    };
+  }
 };
 </script>
 

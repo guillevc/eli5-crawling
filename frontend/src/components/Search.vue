@@ -2,35 +2,14 @@
   <div class="section">
     <div class="container">
       <div class="wrapper">
-        <div class="field has-addons has-addons-centered">
-          <p class="control">
-            <span class="select">
-              <select>
-                <option>All categories</option>
-                <option>Mathematics</option>
-                <option>Economics</option>
-                <option>Culture</option>
-                <option>Biology</option>
-                <option>Chemistry</option>
-                <option>Physics</option>
-                <option>Technology</option>
-                <option>Engineering</option>
-                <option>Other</option>
-              </select>
-            </span>
-          </p>
-          <p class="control is-expanded">
-            <input class="input" type="text" placeholder="Ask a question">
-          </p>
-          <p class="control">
-            <a class="button is-primary">
-              Search
-            </a>
-          </p>
-        </div>
+        <SearchInput
+          class="search-input"
+          :searchQuery="searchQuery"
+          @submit="onSearchSubmit">
+        </SearchInput>
       </div>
       <section class="results">
-        <p class="results-summary">Found 14 matches for: "{{query}}" <span v-if="category !== ''">in {{categories[category].name}}</span></p>
+        <p class="results-summary">Found 14 matches for: "{{searchQuery}}" <span v-if="category !== ''">in {{categories[category].name}}</span></p>
         <ol class="answers">
           <li>
             <p><category-tag :category="categories['mathematics']"></category-tag><small class="question">ELI5: What is fuzzy logic and how is it that it's found in missiles and rice cookers?</small></p>
@@ -63,12 +42,13 @@ That means you will overshoot the desired temperature by a bit if you keep it po
 
 <script>
 import CategoryTag from './CategoryTag.vue';
+import SearchInput from './SearchInput.vue';
 import categories from '../model/categories';
 
 export default {
   name: 'Search',
   props: {
-    query: {
+    searchQuery: {
       type: String,
       default: ''
     },
@@ -81,8 +61,14 @@ export default {
   data: () => ({
     categories
   }),
+  methods: {
+    onSearchSubmit(q, c) {
+      this.$router.push({ name: 'search', query: { q, c } });
+    }
+  },
   components: {
-    CategoryTag
+    CategoryTag,
+    SearchInput
   },
 };
 </script>
@@ -98,7 +84,7 @@ export default {
   margin-bottom: 1rem;
 }
 
-.field {
+.search-input {
   max-width: 60em;
   margin: 0 auto;
 }
@@ -124,5 +110,4 @@ export default {
     }
   }
 }
-
 </style>

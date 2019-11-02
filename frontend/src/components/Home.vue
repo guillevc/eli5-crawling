@@ -7,39 +7,29 @@
             <img src="../assets/explainlikeimfive.png">
           </router-link>
         </figure>
-        <div class="field has-addons has-addons-centered">
-          <p class="control">
-            <span class="select">
-              <select v-model="category">
-                <option value=''>All categories</option>
-                <option v-for="(value, key) in categories" :key="key" :value="key">{{value.name}}</option>
-              </select>
-            </span>
-          </p>
-          <p class="control is-expanded">
-            <input v-model="searchQuery" class="input" type="text" placeholder="Ask a question">
-          </p>
-          <p class="control">
-            <router-link :to="{name: 'search', query: { q: searchQuery, c: category }}" class="button is-primary">
-              Search
-            </router-link>
-          </p>
-        </div>
+        <SearchInput class="search-input" @submit="onSearchSubmit"></SearchInput>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import SearchInput from './SearchInput.vue';
 import categories from '../model/categories';
 
 export default {
   name: 'Home',
   data: () => ({
-    categories,
-    searchQuery: '',
-    category: '',
-  })
+    categories
+  }),
+  methods: {
+    onSearchSubmit(q, c) {
+      this.$router.push({ name: 'search', query: { q, c } });
+    }
+  },
+  components: {
+    SearchInput
+  }
 };
 </script>
 
@@ -49,6 +39,7 @@ export default {
 .section, .container, .wrapper {
   height: 100%;
 }
+
 .wrapper {
   display: flex;
   align-items: center;
@@ -62,7 +53,7 @@ export default {
   margin-bottom: 20px;
 }
 
-.field {
+.search-input {
   min-width: 65%;
   margin: 0 auto;
 }
