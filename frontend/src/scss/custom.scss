@@ -30,6 +30,10 @@ $body-background-color: lighten($gaingsboro-brand, 5%);
 $input-shadow: none;
 $section-padding: 1.5rem 1.5rem; // default: 3rem 1.5rem
 
+@import '~bulma/sass/utilities/initial-variables.sass';
+$navbar-breakpoint: $tablet;
+$navbar-height: 3.7rem;
+
 //Adding custom colors
 @import '~bulma/sass/utilities/functions.sass';
 $orange: #ff8606;

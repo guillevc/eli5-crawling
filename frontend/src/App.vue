@@ -3,15 +3,20 @@
     <div class="app-content">
       <router-view/>
     </div>
-    <footer class="footer">
-      <div class="content has-text-centered">
-        <p>
-          <strong>Crawling and searching <a href="https://reddit.com/r/explainlikeimfive" target="_blank">reddit.com/r/explainlikeimfive</a></strong> by <a href="https://github.com/guillevc" target="_blank">Guillermo Varela</a> and <a href="#" target="_blank">Luis Cruz</a>.
-        </p>
-      </div>
-    </footer>
+    <TheFooter class="app-footer"></TheFooter>
   </div>
 </template>
+
+<script>
+import TheFooter from './components/TheFooter.vue';
+
+export default {
+  name: 'App',
+  components: {
+    TheFooter
+  }
+};
+</script>
 
 <style lang="scss">
 @import 'scss/custom.scss';
@@ -29,7 +34,7 @@ body, #app {
   flex: 1 0 auto;
 }
 
-.footer {
+.app-footer {
   flex-shrink: 0;
 }
 </style>

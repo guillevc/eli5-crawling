@@ -10,7 +10,7 @@
       </span>
     </p>
     <p class="control is-expanded">
-      <input v-model="mySearchQuery" class="input" type="text" placeholder="Ask a question">
+      <input v-model.trim="mySearchQuery" class="input" type="text" placeholder="Ask a question">
     </p>
     <p class="control">
       <button type="submit" class="button is-primary">
