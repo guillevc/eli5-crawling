@@ -23,4 +23,14 @@ public interface QuestionRepository extends ElasticsearchRepository<Question, St
             "    }")
     public List<Question> findByText(String text);
 
+    /* @Query("{\n" +
+            "    \"bool\": {\n" +
+            "        \"must\": {\n" +
+            "            \"match\": {\n" +
+            "                \"text\": \"colour\"\n" +
+            "            }\n" +
+            "        }\n" +
+            "    }")
+    public List<Question> findByCategory(String category); */
+
 }

@@ -1,8 +1,9 @@
 package fic.riws.eli5riws.model;
 
+import java.util.List;
+
 import javax.persistence.Id;
 
-import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
@@ -23,7 +24,9 @@ public class Question {
     private String text;
     @Field(type = FieldType.Keyword)
     private String category;
-    
     private Integer karma;
+
+    @Field(type = FieldType.Nested, includeInParent = true)
+    private List<Answer> answers;
 
 }

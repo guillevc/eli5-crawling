@@ -7,9 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fic.riws.eli5riws.dto.RedditPost;
-import fic.riws.eli5riws.model.Answer;
 import fic.riws.eli5riws.model.Question;
-import fic.riws.eli5riws.repository.AnswerRepository;
 import fic.riws.eli5riws.repository.QuestionRepository;
 /* import lombok.extern.slf4j.Slf4j;
 
@@ -19,9 +17,6 @@ public class QuestionService {
 
     @Autowired 
     private QuestionRepository questionRepository;
-
-    @Autowired 
-    private AnswerRepository answerRepository;
 
     public boolean exists(String s) {
         return questionRepository.existsById(s);
@@ -39,8 +34,7 @@ public class QuestionService {
     public List<RedditPost> findAll() {
         List <RedditPost> posts = new ArrayList<>();
         for(Question q : questionRepository.findAll()) {
-            List<Answer> answers = answerRepository.findByQuestionId(q.getId());
-            posts.add(new RedditPost(q, answers));
+            posts.add(new RedditPost(q));
         }
         return posts;
     }

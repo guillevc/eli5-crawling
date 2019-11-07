@@ -6,7 +6,6 @@ import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
 import fic.riws.eli5riws.model.Answer;
 import fic.riws.eli5riws.model.Question;
-import fic.riws.eli5riws.service.AnswerService;
 import fic.riws.eli5riws.service.QuestionService;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -22,8 +21,6 @@ import java.util.regex.Pattern;
 public final class Crawler extends WebCrawler {
     
     private static QuestionService questionService;
-
-    private static AnswerService answerService;
 
     private final static Pattern FILTERS = Pattern.compile(".*(\\.(" +
             "css|js" +
@@ -41,10 +38,6 @@ public final class Crawler extends WebCrawler {
 
     public static void setQuestionService(QuestionService questionService) {
         Crawler.questionService = questionService;
-    }
-
-    public static void setAnswerService(AnswerService answerService) {
-        Crawler.answerService = answerService;
     }
 
     /**
@@ -93,7 +86,7 @@ public final class Crawler extends WebCrawler {
                 Element questionKarmaElement = doc.select(".score.unvoted").first();
 
                 String questionText = questionTitleElement.text();
-                String questionCategory = questionCategoryElement.text();
+                String questionCategory = (questionCategoryElement != null &&  questionCategoryElement.hasText())? questionCategoryElement.text() : "Other";
                 Integer questionKarma;
 
                 try {
@@ -102,8 +95,7 @@ public final class Crawler extends WebCrawler {
                     questionKarma = null;
                 }
                 Question q = new Question(url.substring(url.indexOf("comments/") + 9, url.indexOf("comments/") + 15), 
-                    questionText, questionCategory, questionKarma);
-                q = questionService.save(q);
+                    questionText, questionCategory, questionKarma, new ArrayList<Answer>());
                 // log.info("Question stored -> " + q.toString());
                 List<Answer> answers = new ArrayList<Answer>();
                 Elements questionResponses = doc.select(".commentarea > .sitetable > .comment:not(.stickied) > .entry");
@@ -129,7 +121,8 @@ public final class Crawler extends WebCrawler {
                         continue;
                     }
                 }
-                answerService.saveAll(answers);
+                q.setAnswers(answers);
+                q = questionService.save(q);
                 // log.info("Answers added!");
             }
             catch (Exception e){
