@@ -178,4 +178,7 @@ local.properties
 # Ignore all local history of files
 .history
 
+.vscode/launch.json
+
+backend/src/main/resources/public/*
 # End of https://www.gitignore.io/api/visualstudiocode
