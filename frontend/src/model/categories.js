@@ -38,5 +38,10 @@ export default {
     name: 'Physics',
     tagClass: 'is-orange',
     icon: 'atom'
+  },
+  other: {
+    name: 'Other',
+    tagClass: 'is-link',
+    icon: 'infinity'
   }
 };

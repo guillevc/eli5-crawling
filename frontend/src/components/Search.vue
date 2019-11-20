@@ -16,12 +16,18 @@
       </nav>
     <div class="section">
       <div class="container">
-        <section class="results">
-          <p class="results-summary">Found 14 matches for: "{{searchQuery}}" <span v-if="category !== ''">in {{categories[category].name}}</span></p>
-          <ol class="answers" v-if="questions != null">
-            <li v-for="question in questions" :key="question.id">
-              <p><category-tag :category="categories['mathematics']"></category-tag><small class="question">{{question.text}}</small></p>
-              <p>{{question.answers[0].text}}</p>
+        <section v-if="answers != null && answers.length > 0" class="results">
+          <p class="results-summary">Found {{response.data.numberOfElements}} matches of {{response.data.totalElements}} total for: "{{searchQuery}}" <span v-if="category !== ''">in {{categories[category].name}}</span></p>
+          <ol class="answers" >
+            <li v-for="answer in answers" :key="answer.id">
+              <!-- TODO meter other como categoría en elastic -->
+              <p>
+                <category-tag
+                    :category="categories[answer.question.category] || categories.other">
+                </category-tag>
+                <small class="question">{{answer.question.text}}</small>
+              </p>
+              <p>{{answer.text}}</p>
             </li>
           </ol>
         </section>
@@ -51,26 +57,32 @@ export default {
   },
   data: () => ({
     categories,
-    questions: []
+    response: null
   }),
+  computed: {
+    answers() {
+      return this.response ? this.response.data.content : [];
+    }
+  },
   methods: {
-    async fetchResults(searchQuery) {
-      const results = await service.findQuestions(searchQuery || this.searchQuery);
-      this.questions = results;
-      console.log(this.questions);
+    async fetchAnswers(searchQuery, category) {
+      const results = await service.findAnswers(searchQuery || this.searchQuery, category || this.category);
+      this.response = results;
     },
     async onSearchSubmit(q, c) {
       this.$router.push({ name: 'search', query: { q, c } })
           .catch(() => {
-            this.fetchResults();
+            this.fetchAnswers();
           });
     }
   },
-  async created() {
-    await this.fetchResults();
+  watch: {
+    '$route'(to, from) {
+      this.fetchAnswers();
+    }
   },
-  async updated() {
-    await this.fetchResults();
+  async created() {
+    await this.fetchAnswers();
   },
   components: {
     CategoryTag,
