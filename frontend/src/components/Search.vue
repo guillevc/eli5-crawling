@@ -30,6 +30,17 @@
               <p>{{answer.text}}</p>
             </li>
           </ol>
+          <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+            <a class="pagination-previous" @click="onPreviousPageClick()" :disabled="data.first">Previous</a>
+            <a class="pagination-next" @click="onNextPageClick()" :disabled="data.last">Next page</a>
+            <ul class="pagination-list">
+              <li><a class="pagination-link" @click="onFirstPageClick()" :disabled="!canGoToFirstPage()">1</a></li>
+              <li><span class="pagination-ellipsis">&hellip;</span></li>
+              <li><a class="pagination-link is-current" aria-current="page">{{page + 1}}</a></li>
+              <li><span class="pagination-ellipsis">&hellip;</span></li>
+              <li><a class="pagination-link" @click="onLastPageClick()" :disabled="!canGoToLastPage()">{{data.totalPages}}</a></li>
+            </ul>
+          </nav>
         </section>
       </div>
     </div>
@@ -53,6 +64,10 @@ export default {
       type: String,
       default: '',
       validator: value => [...Object.keys(categories), ''].includes(value)
+    },
+    page: {
+      type: Number,
+      default: 0
     }
   },
   data: () => ({
@@ -62,18 +77,45 @@ export default {
   computed: {
     answers() {
       return this.response ? this.response.data.content : [];
+    },
+    data() {
+      return this.response ? this.response.data : null;
     }
   },
   methods: {
-    async fetchAnswers(searchQuery, category) {
-      const results = await service.findAnswers(searchQuery || this.searchQuery, category || this.category);
+    async fetchAnswers(searchQuery, category, page) {
+      const results = await service.findAnswers(searchQuery || this.searchQuery, category || this.category, page || this.page || 0, 10);
       this.response = results;
     },
     async onSearchSubmit(q, c) {
-      this.$router.push({ name: 'search', query: { q, c } })
+      this.$router.push({ name: 'search', query: { q, c, page: 0 } })
           .catch(() => {
             this.fetchAnswers();
           });
+    },
+    async goToPage(page) {
+      this.$router.push({ name: 'search', query: { q: this.searchQuery, c: this.category, page} })
+          .catch(() => {
+            this.fetchAnswers();
+      });
+    },
+    onNextPageClick() {
+      if (!this.data.last) this.goToPage(this.page + 1)
+    },
+    onPreviousPageClick() {
+      if (!this.data.first) this.goToPage(this.page - 1)
+    },
+    canGoToFirstPage() {
+      return !this.data.first && this.data.totalPages > 1;
+    },
+    canGoToLastPage() {
+      return !this.data.last && this.data.totalPages > 1;
+    },
+    onFirstPageClick() {
+      if (this.canGoToFirstPage()) this.goToPage(0);
+    },
+    onLastPageClick() {
+      if (!this.canGoToLastPage()) this.goToPage(this.data.totalPages - 1);
     }
   },
   watch: {
@@ -149,5 +191,13 @@ export default {
 
 .search-input {
   width: 100%;
+}
+
+.pagination {
+  border-radius: 4px;
+  background-color: white;
+  box-shadow: 0px 0px 18px -8px rgba(0,0,0,0.2);
+  padding: 6px;
+  margin-top: 20px;
 }
 </style>

@@ -26,7 +26,8 @@ library.add(
   faAtom,
   faShapes,
   faChild,
-  faInfinity);
+  faInfinity
+);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
 Vue.config.productionTip = false;
