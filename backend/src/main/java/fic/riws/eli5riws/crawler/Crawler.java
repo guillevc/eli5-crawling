@@ -6,7 +6,7 @@ import edu.uci.ics.crawler4j.parser.HtmlParseData;
 import edu.uci.ics.crawler4j.url.WebURL;
 import fic.riws.eli5riws.model.Answer;
 import fic.riws.eli5riws.model.Question;
-import fic.riws.eli5riws.service.QuestionService;
+import fic.riws.eli5riws.service.MainService;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,8 +19,8 @@ import java.util.regex.Pattern;
 
 @Slf4j
 public final class Crawler extends WebCrawler {
-    
-    private static QuestionService questionService;
+
+    private static MainService mainService;
 
     private final static Pattern FILTERS = Pattern.compile(".*(\\.(" +
             "css|js" +
@@ -36,8 +36,8 @@ public final class Crawler extends WebCrawler {
     private final static Pattern VALID_URLS = Pattern.compile("https://old.reddit.com/r/explainlikeimfive/comments/\\w{6}/eli5.[^/]*/$" +
             "|https://old.reddit.com/r/explainlikeimfive/top/\\?sort=top&t=all.*");
 
-    public static void setQuestionService(QuestionService questionService) {
-        Crawler.questionService = questionService;
+    public static void setMainService(MainService mainService) {
+        Crawler.mainService = mainService;
     }
 
     /**
@@ -60,7 +60,7 @@ public final class Crawler extends WebCrawler {
     public boolean shouldVisit(Page referringPage, WebURL url) {
         String href = url.getURL().toLowerCase();
         return (VALID_URLS.matcher(href).matches()) && (!FILTERS.matcher(href).matches()
-            && !questionService.exists(href.substring(href.indexOf("comments/") + 9, href.indexOf("comments/") + 15)));
+            && !mainService.existsByQuestionId(href.substring(href.indexOf("comments/") + 9, href.indexOf("comments/") + 15)));
     }
 
     /**
@@ -81,7 +81,7 @@ public final class Crawler extends WebCrawler {
 
             try{
                 /* Para cada pregunta averigüamos el texto, categoría, karma y respuestas */
-                Element questionTitleElement = doc.select("p.title a.title").first(); 
+                Element questionTitleElement = doc.select("p.title a.title").first();
                 Element questionCategoryElement = doc.select("p.title span.linkflairlabel").first();
                 Element questionKarmaElement = doc.select(".score.unvoted").first();
 
@@ -94,8 +94,8 @@ public final class Crawler extends WebCrawler {
                 } catch (NumberFormatException e) {
                     questionKarma = null;
                 }
-                Question q = new Question(url.substring(url.indexOf("comments/") + 9, url.indexOf("comments/") + 15), 
-                    questionText, questionCategory, questionKarma, new ArrayList<Answer>());
+                Question q = new Question(url.substring(url.indexOf("comments/") + 9, url.indexOf("comments/") + 15),
+                    questionText, questionCategory, questionKarma);
                 // log.info("Question stored -> " + q.toString());
                 List<Answer> answers = new ArrayList<Answer>();
                 Elements questionResponses = doc.select(".commentarea > .sitetable > .comment:not(.stickied) > .entry");
@@ -106,7 +106,7 @@ public final class Crawler extends WebCrawler {
                     try {
                         String answerId = answerHref.substring(answerHref.length() - 8, answerHref.length() - 1);
                         String answerText = el.select(".usertext-body p").text();
-                        if (!answerText.equals("[deleted]") && !answerText.equals("[removed]")) { 
+                        if (!answerText.equals("[deleted]") && !answerText.equals("[removed]")) {
                             Integer answerKarma;
                             try {
                                 answerKarma = Integer.parseInt(el.select(".score.unvoted").attr("title"));
@@ -114,15 +114,14 @@ public final class Crawler extends WebCrawler {
                                 answerKarma = null;
                             }
                             // log.info("Answer added!");
-                            answers.add(new Answer(answerId, answerText, answerKarma, q.getId()));
+                            answers.add(new Answer(answerId, answerText, answerKarma, q));
                         }
                     } catch (StringIndexOutOfBoundsException e){
                         // log.info("Answer not added! " + answerHref);
                         continue;
                     }
                 }
-                q.setAnswers(answers);
-                q = questionService.save(q);
+                mainService.saveAnswers(answers);
                 // log.info("Answers added!");
             }
             catch (Exception e){
