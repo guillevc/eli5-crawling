@@ -17,7 +17,7 @@ public class Answer {
     
     @Id
     private String id;
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Text, analyzer = "english")
     private String text;
     private Integer karma;
 

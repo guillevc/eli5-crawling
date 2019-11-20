@@ -18,7 +18,7 @@ import java.net.UnknownHostException;
 @EnableElasticsearchRepositories(
         basePackages = "fic.riws.eli5riws.repository"
 )
-public class ElasticSearchConfig {
+public class ElasticsearchConfig {
 
     @Bean
     public Client client() throws UnknownHostException {

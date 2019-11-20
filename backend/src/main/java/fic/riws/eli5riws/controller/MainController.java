@@ -2,16 +2,17 @@ package fic.riws.eli5riws.controller;
 
 import fic.riws.eli5riws.crawler.CrawlerLauncher;
 import fic.riws.eli5riws.model.Answer;
-import fic.riws.eli5riws.model.Question;
 import fic.riws.eli5riws.service.MainService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("${app.api.base-url}")
@@ -20,12 +21,6 @@ public class MainController {
 
     @Autowired
     private MainService mainService;
-
-    @RequestMapping(path = "hello")
-    public String sayHello() {
-        log.info("GET called on /hello resource");
-        return "hello";
-    }
 
     @RequestMapping(path = "index")
     public void index() throws Exception {
@@ -38,8 +33,14 @@ public class MainController {
     }
 
     @RequestMapping(path = "answers")
-    public List<Answer> list(@RequestParam String text, @RequestParam(required = false) String category) {
-        return mainService.findAnswers(text, category);
+    public Page<Answer> list(@RequestParam String text, @RequestParam(required = false) String category, Pageable pageable) {
+        Optional<String> categoryOptional;
+        if (category == null || category.trim().equals("")) {
+            categoryOptional = Optional.ofNullable(null);
+        } else {
+            categoryOptional = Optional.ofNullable(category);
+        }
+        return mainService.findAnswers(text, categoryOptional, pageable);
     }
 
 }
