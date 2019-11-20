@@ -3,7 +3,6 @@ package fic.riws.eli5riws.controller;
 import fic.riws.eli5riws.crawler.CrawlerLauncher;
 import fic.riws.eli5riws.model.Answer;
 import fic.riws.eli5riws.service.MainService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +15,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("${app.api.base-url}")
-@Slf4j
 public class MainController {
 
     @Autowired

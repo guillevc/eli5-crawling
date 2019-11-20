@@ -86,9 +86,18 @@ public final class Crawler extends WebCrawler {
                 Element questionKarmaElement = doc.select(".score.unvoted").first();
 
                 String questionText = questionTitleElement.text();
-                String questionCategory = (questionCategoryElement != null &&  questionCategoryElement.hasText())? questionCategoryElement.text() : "Other";
+                String questionCategory;
+                if (questionCategoryElement != null &&  questionCategoryElement.hasText()) {
+                    questionCategory = questionCategoryElement.text().toLowerCase();
+                    if (!questionCategory.equals("biology") && !questionCategory.equals("chemistry") && !questionCategory.equals("culture") &&
+                        !questionCategory.equals("economics") && !questionCategory.equals("engineering") && !questionCategory.equals("mathematics") &&
+                            !questionCategory.equals("physics") && !questionCategory.equals("tecnology")) {  
+                        questionCategory = "other";
+                    }
+                } else {
+                    questionCategory = "other";
+                }
                 Integer questionKarma;
-
                 try {
                     questionKarma = Integer.parseInt(questionKarmaElement.attr("title"));
                 } catch (NumberFormatException e) {
