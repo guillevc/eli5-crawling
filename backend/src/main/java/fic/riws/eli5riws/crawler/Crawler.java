@@ -104,7 +104,7 @@ public final class Crawler extends WebCrawler {
                     questionKarma = null;
                 }
                 Question q = new Question(url.substring(url.indexOf("comments/") + 9, url.indexOf("comments/") + 15),
-                    questionText, questionCategory, questionKarma);
+                    questionText, questionCategory, questionKarma, url);
                 // log.info("Question stored -> " + q.toString());
                 List<Answer> answers = new ArrayList<Answer>();
                 Elements questionResponses = doc.select(".commentarea > .sitetable > .comment:not(.stickied) > .entry");
@@ -114,7 +114,12 @@ public final class Crawler extends WebCrawler {
 
                     try {
                         String answerId = answerHref.substring(answerHref.length() - 8, answerHref.length() - 1);
-                        String answerText = el.select(".usertext-body p").text();
+                        String answerText = el.select(".usertext-body p").html();
+                        //Substituiremos los links internos de reddit que apuntan a usuarios
+                        answerText = answerText.replace("href=\"/u/", "target=\"_blank\" href=\"https://reddit.com/user/");
+                        //Substituiremos los links a la página nueva de reddit a la vieja, y las abriremos en una nueva pestaña
+                        answerText = answerText.replace("href=\"","target=\"_blank\" href=\"");
+
                         if (!answerText.equals("[deleted]") && !answerText.equals("[removed]")) {
                             Integer answerKarma;
                             try {
@@ -123,7 +128,7 @@ public final class Crawler extends WebCrawler {
                                 answerKarma = null;
                             }
                             // log.info("Answer added!");
-                            answers.add(new Answer(answerId, answerText, answerKarma, q));
+                            answers.add(new Answer(answerId, answerText, answerKarma, url.concat(answerId), q));
                         }
                     } catch (StringIndexOutOfBoundsException e){
                         // log.info("Answer not added! " + answerHref);

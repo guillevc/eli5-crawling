@@ -34,7 +34,7 @@
                 </category-tag>
                 <small class="question">{{answer.question.text}}</small>
               </p>
-              <p>{{answer.text}}</p>
+              <p class="text" v-html="answer.text"></p>
             </li>
           </ol>
           <nav class="pagination is-centered" role="navigation" aria-label="pagination">
@@ -159,6 +159,10 @@ export default {
 
 .results-summary {
   margin-bottom: 1rem;
+}
+
+.text {
+  white-space: pre-wrap;
 }
 
 .answers {
