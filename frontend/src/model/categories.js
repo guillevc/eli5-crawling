@@ -17,7 +17,7 @@ export default {
   economics: {
     name: 'Economics',
     tagClass: 'is-success',
-    icon: 'chart'
+    icon: 'chart-line'
   },
   culture: {
     name: 'Culture',

@@ -10,14 +10,21 @@
             </router-link>
           </div>
           <div class="navbar-item navbar-item-search">
-            <SearchInput class="search-input" :searchQuery="searchQuery" :category="category" @submit="onSearchSubmit"></SearchInput>
+            <SearchInput
+              class="search-input"
+              :searchQuery="searchQuery"
+              :category="category"
+              @submit="onSearchSubmit">
+            </SearchInput>
           </div>
         </div>
       </nav>
     <div class="section">
       <div class="container">
         <section v-if="answers != null && answers.length > 0" class="results">
-          <p class="results-summary">Found {{response.data.numberOfElements}} matches of {{response.data.totalElements}} total for: "{{searchQuery}}" <span v-if="category !== ''">in {{categories[category].name}}</span></p>
+          <p class="results-summary">Found {{response.data.numberOfElements}}
+            matches of {{response.data.totalElements}} total for: "{{searchQuery}}"
+            <span v-if="category !== ''">in {{categories[category].name}}</span></p>
           <ol class="answers" >
             <li v-for="answer in answers" :key="answer.id">
               <!-- TODO meter other como categoría en elastic -->
@@ -31,14 +38,26 @@
             </li>
           </ol>
           <nav class="pagination is-centered" role="navigation" aria-label="pagination">
-            <a class="pagination-previous" @click="onPreviousPageClick()" :disabled="data.first">Previous</a>
-            <a class="pagination-next" @click="onNextPageClick()" :disabled="data.last">Next page</a>
+            <a class="pagination-previous"
+                @click="onPreviousPageClick()"
+                :disabled="data.first">Previous</a>
+            <a class="pagination-next"
+                @click="onNextPageClick()"
+                :disabled="data.last">Next page</a>
             <ul class="pagination-list">
-              <li><a class="pagination-link" @click="onFirstPageClick()" :disabled="!canGoToFirstPage()">1</a></li>
+              <li>
+                <a class="pagination-link"
+                    @click="onFirstPageClick()"
+                    :disabled="!canGoToFirstPage()">1</a>
+                </li>
               <li><span class="pagination-ellipsis">&hellip;</span></li>
               <li><a class="pagination-link is-current" aria-current="page">{{page + 1}}</a></li>
               <li><span class="pagination-ellipsis">&hellip;</span></li>
-              <li><a class="pagination-link" @click="onLastPageClick()" :disabled="!canGoToLastPage()">{{data.totalPages}}</a></li>
+              <li>
+                <a class="pagination-link"
+                  @click="onLastPageClick()"
+                  :disabled="!canGoToLastPage()">{{data.totalPages}}</a>
+              </li>
             </ul>
           </nav>
         </section>
@@ -84,26 +103,28 @@ export default {
   },
   methods: {
     async fetchAnswers(searchQuery, category, page) {
-      const results = await service.findAnswers(searchQuery || this.searchQuery, category || this.category, page || this.page || 0, 10);
+      const results = await service.findAnswers(searchQuery || this.searchQuery,
+        category || this.category,
+        page || this.page || 0, 10);
       this.response = results;
     },
     async onSearchSubmit(q, c) {
       this.$router.push({ name: 'search', query: { q, c, page: 0 } })
-          .catch(() => {
-            this.fetchAnswers();
-          });
+        .catch(() => {
+          this.fetchAnswers();
+        });
     },
     async goToPage(page) {
-      this.$router.push({ name: 'search', query: { q: this.searchQuery, c: this.category, page} })
-          .catch(() => {
-            this.fetchAnswers();
-      });
+      this.$router.push({ name: 'search', query: { q: this.searchQuery, c: this.category, page } })
+        .catch(() => {
+          this.fetchAnswers();
+        });
     },
     onNextPageClick() {
-      if (!this.data.last) this.goToPage(this.page + 1)
+      if (!this.data.last) this.goToPage(this.page + 1);
     },
     onPreviousPageClick() {
-      if (!this.data.first) this.goToPage(this.page - 1)
+      if (!this.data.first) this.goToPage(this.page - 1);
     },
     canGoToFirstPage() {
       return !this.data.first && this.data.totalPages > 1;
@@ -119,7 +140,7 @@ export default {
     }
   },
   watch: {
-    '$route'(to, from) {
+    $route() {
       this.fetchAnswers();
     }
   },

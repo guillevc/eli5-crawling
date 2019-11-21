@@ -10,7 +10,8 @@ import {
   faAtom,
   faShapes,
   faChild,
-  faInfinity
+  faInfinity,
+  faChartLine
 } from '@fortawesome/free-solid-svg-icons';
 import Vue from 'vue';
 import App from './App.vue';
@@ -26,7 +27,8 @@ library.add(
   faAtom,
   faShapes,
   faChild,
-  faInfinity
+  faInfinity,
+  faChartLine
 );
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 

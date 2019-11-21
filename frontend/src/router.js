@@ -18,7 +18,11 @@ export default new Router({
       path: '/search',
       name: 'search',
       component: Search,
-      props: route => ({ searchQuery: route.query.q, category: route.query.c, page: Number(route.query.page) })
+      props: route => ({
+        searchQuery: route.query.q,
+        category: route.query.c,
+        page: Number(route.query.page) || 0
+      })
     }
     // {
     //   path: '/about',
