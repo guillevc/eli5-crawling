@@ -31,6 +31,4 @@ build/
 .vscode/
 
 ### App ###
-src/main/resources/public/static
-src/main/resources/public/favicon.ico
-src/main/resources/public/index.html
+src/main/resources/public/*
