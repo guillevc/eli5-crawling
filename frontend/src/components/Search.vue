@@ -1,24 +1,24 @@
 <template>
   <div>
     <nav class="navbar" role="navigation" aria-label="main navigation">
-        <div class="container">
-          <div class="navbar-brand">
-            <router-link :to="{name: 'home'}" exact class="navbar-item navbar-item-logo">
-              <font-awesome-icon icon="shapes" size="lg" class="icon-shapes"></font-awesome-icon>
-              <font-awesome-icon icon="child" size="lg" class="icon-child"></font-awesome-icon>
-              <div class="brand-name">eli5</div>
-            </router-link>
-          </div>
-          <div class="navbar-item navbar-item-search">
-            <SearchInput
-              class="search-input"
-              :searchQuery="searchQuery"
-              :category="category"
-              @submit="onSearchSubmit">
-            </SearchInput>
-          </div>
+      <div class="container">
+        <div class="navbar-brand">
+          <router-link :to="{name: 'home'}" exact class="navbar-item navbar-item-logo">
+            <font-awesome-icon icon="shapes" size="lg" class="icon-shapes"></font-awesome-icon>
+            <font-awesome-icon icon="child" size="lg" class="icon-child"></font-awesome-icon>
+            <div class="brand-name">eli5</div>
+          </router-link>
         </div>
-      </nav>
+        <div class="navbar-item navbar-item-search">
+          <SearchInput
+            class="search-input"
+            :searchQuery="searchQuery"
+            :category="category"
+            @submit="onSearchSubmit">
+          </SearchInput>
+        </div>
+      </div>
+    </nav>
     <div class="section">
       <div class="container">
         <section v-if="answers != null && answers.length > 0" class="results">
@@ -27,14 +27,27 @@
             <span v-if="category !== ''">in {{categories[category].name}}</span></p>
           <ol class="answers" >
             <li v-for="answer in answers" :key="answer.id">
-              <!-- TODO meter other como categoría en elastic -->
               <p>
                 <category-tag
                     :category="categories[answer.question.category] || categories.other">
                 </category-tag>
                 <small class="question">{{answer.question.text}}</small>
+                <small class="karma">
+                  ({{answer.question.karma}} points)
+                  <a :href="answer.question.url" target="_blank" class="external-link">
+                    <font-awesome-icon icon="external-link-alt"></font-awesome-icon>
+                  </a>
+                </small>
               </p>
-              <p class="text" v-html="answer.text"></p>
+              <p>
+                <span class="text" v-html="answer.text"></span>
+                <small class="karma">
+                  ({{answer.karma}} points)
+                  <a :href="answer.url" target="_blank" class="external-link">
+                    <font-awesome-icon icon="external-link-alt"></font-awesome-icon>
+                  </a>
+                </small>
+              </p>
             </li>
           </ol>
           <nav class="pagination is-centered" role="navigation" aria-label="pagination">
@@ -187,6 +200,22 @@ export default {
   }
 }
 
+.pagination {
+  border-radius: 4px;
+  background-color: white;
+  box-shadow: 0px 0px 18px -8px rgba(0,0,0,0.2);
+  padding: 6px;
+  margin-top: 20px;
+}
+
+.external-link {
+  margin-left: 3px;
+}
+
+.karma {
+  font-size: .8em;
+}
+
 /* navbar */
 
 @media (min-width: $tablet) and (max-width: $desktop) {
@@ -216,13 +245,5 @@ export default {
 
 .search-input {
   width: 100%;
-}
-
-.pagination {
-  border-radius: 4px;
-  background-color: white;
-  box-shadow: 0px 0px 18px -8px rgba(0,0,0,0.2);
-  padding: 6px;
-  margin-top: 20px;
 }
 </style>

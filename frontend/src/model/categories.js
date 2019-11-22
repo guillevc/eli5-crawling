@@ -41,7 +41,7 @@ export default {
   },
   other: {
     name: 'Other',
-    tagClass: 'is-link',
+    tagClass: 'is-light',
     icon: 'infinity'
   }
 };

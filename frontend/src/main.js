@@ -11,7 +11,9 @@ import {
   faShapes,
   faChild,
   faInfinity,
-  faChartLine
+  faChartLine,
+  faExternalLinkAlt,
+  faArrowAltCircleUp
 } from '@fortawesome/free-solid-svg-icons';
 import Vue from 'vue';
 import App from './App.vue';
@@ -28,7 +30,9 @@ library.add(
   faShapes,
   faChild,
   faInfinity,
-  faChartLine
+  faChartLine,
+  faExternalLinkAlt,
+  faArrowAltCircleUp
 );
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 
