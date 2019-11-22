@@ -9,15 +9,21 @@ import edu.uci.ics.crawler4j.robotstxt.RobotstxtServer;
 
 public class CrawlerLauncher {
 
+    private static final int NUMBER_OF_CRAWLERS = 4;
+    private static final int MAX_DEPTH_OF_CRAWLING = 20;
+    private static final int MAX_PAGES_TO_FETCH = 20000;
+    private static final String USER_AGENT_STRING = "Subdesarrolladores";
+
     public static void main(String[] args) throws Exception {
         String crawlStorageFolder = Files.createTempDir().getAbsolutePath();
-        int numberOfCrawlers = 4;
+        int numberOfCrawlers = NUMBER_OF_CRAWLERS;
 
         CrawlConfig config = new CrawlConfig();
         config.setCrawlStorageFolder(crawlStorageFolder);
-        config.setMaxDepthOfCrawling(-1);
-        config.setMaxPagesToFetch(2000);
-        config.setUserAgentString("Subdesarrolladores");
+        config.setMaxDepthOfCrawling(MAX_DEPTH_OF_CRAWLING);
+        config.setMaxPagesToFetch(MAX_PAGES_TO_FETCH);
+        config.setUserAgentString(USER_AGENT_STRING);
+        config.setResumableCrawling(true);
 
         // Instantiate the controller for this crawl.
         PageFetcher pageFetcher = new PageFetcher(config);
