@@ -21,65 +21,74 @@
     </nav>
     <div class="section">
       <div class="container">
-        <section v-if="answers != null && answers.length > 0" class="results">
-          <p class="results-summary">Found {{response.data.numberOfElements}}
-            matches of {{response.data.totalElements}} total for: "{{searchQuery}}"
-            <span v-if="category !== ''">in {{categories[category].name}}</span></p>
-          <ol class="answers" >
-            <li v-for="answer in answers" :key="answer.id">
-              <p>
-                <category-tag
-                    :category="categories[answer.question.category] || categories.other">
-                </category-tag>
-                <small class="question">{{answer.question.text}}</small>
-                <small class="karma">
-                  ({{answer.question.karma}} points)
-                  <a :href="answer.question.url" target="_blank" class="external-link">
-                    <font-awesome-icon icon="external-link-alt"></font-awesome-icon>
-                  </a>
-                </small>
-              </p>
-              <p>
-                <span class="text" v-html="answer.text"></span>
-                <small class="karma">
-                  ({{answer.karma}} points)
-                  <a :href="answer.url" target="_blank" class="external-link">
-                    <font-awesome-icon icon="external-link-alt"></font-awesome-icon>
-                  </a>
-                </small>
-              </p>
-            </li>
-          </ol>
-          <nav class="pagination is-centered" role="navigation" aria-label="pagination">
-            <a class="pagination-previous"
-                @click="onPreviousPageClick()"
-                :disabled="data.first">Previous</a>
-            <a class="pagination-next"
-                @click="onNextPageClick()"
-                :disabled="data.last">Next page</a>
-            <ul class="pagination-list">
-              <li>
-                <a class="pagination-link"
-                    @click="onFirstPageClick()"
-                    :disabled="!canGoToFirstPage()">1</a>
-                </li>
-              <li><span class="pagination-ellipsis">&hellip;</span></li>
-              <li><a class="pagination-link is-current" aria-current="page">{{page + 1}}</a></li>
-              <li><span class="pagination-ellipsis">&hellip;</span></li>
-              <li>
-                <a class="pagination-link"
-                  @click="onLastPageClick()"
-                  :disabled="!canGoToLastPage()">{{data.totalPages}}</a>
+        <div class="spinner" v-if="loading">
+          <sync-loader :loading="loading" class="text-center" color="#E07A5F"></sync-loader>
+        </div>
+        <template v-else>
+          <section v-if="answers != null && answers.length > 0" class="results">
+            <p class="results-summary">Found {{response.data.numberOfElements}}
+              matches of {{response.data.totalElements}} total for: "{{searchQuery}}"
+              <span v-if="category !== ''">in {{categories[category].name}}</span></p>
+            <ol class="answers" >
+              <li v-for="answer in answers" :key="answer.id">
+                <p>
+                  <category-tag
+                      :category="categories[answer.question.category] || categories.other">
+                  </category-tag>
+                  <small class="question">{{answer.question.text}}</small>
+                  <small class="karma">
+                    ({{answer.question.karma}} points)
+                    <a :href="answer.question.url" target="_blank" class="external-link">
+                      <font-awesome-icon icon="external-link-alt"></font-awesome-icon>
+                    </a>
+                  </small>
+                </p>
+                <p>
+                  <span class="text" v-html="answer.text"></span>
+                  <small class="karma">
+                    ({{answer.karma}} points)
+                    <a :href="answer.url" target="_blank" class="external-link">
+                      <font-awesome-icon icon="external-link-alt"></font-awesome-icon>
+                    </a>
+                  </small>
+                </p>
               </li>
-            </ul>
-          </nav>
-        </section>
+            </ol>
+            <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+              <a class="pagination-previous"
+                  @click="onPreviousPageClick()"
+                  :disabled="data.first">Previous</a>
+              <a class="pagination-next"
+                  @click="onNextPageClick()"
+                  :disabled="data.last">Next page</a>
+              <ul class="pagination-list">
+                <li>
+                  <a class="pagination-link"
+                      @click="onFirstPageClick()"
+                      :disabled="!canGoToFirstPage()">1</a>
+                  </li>
+                <li><span class="pagination-ellipsis">&hellip;</span></li>
+                <li><a class="pagination-link is-current" aria-current="page">{{page + 1}}</a></li>
+                <li><span class="pagination-ellipsis">&hellip;</span></li>
+                <li>
+                  <a class="pagination-link"
+                    @click="onLastPageClick()"
+                    :disabled="!canGoToLastPage()">{{data.totalPages}}</a>
+                </li>
+              </ul>
+            </nav>
+          </section>
+          <section class="no-results" v-else>
+            No results found. Try another query.
+          </section>
+        </template>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import SyncLoader from 'vue-spinner/src/SyncLoader.vue';
 import service from '@/common/service';
 import CategoryTag from './CategoryTag.vue';
 import SearchInput from './SearchInput.vue';
@@ -104,7 +113,8 @@ export default {
   },
   data: () => ({
     categories,
-    response: null
+    response: null,
+    loading: true
   }),
   computed: {
     answers() {
@@ -116,10 +126,12 @@ export default {
   },
   methods: {
     async fetchAnswers(searchQuery, category, page) {
+      this.loading = true;
       const results = await service.findAnswers(searchQuery || this.searchQuery,
         category || this.category,
         page || this.page || 0, 10);
       this.response = results;
+      this.loading = false;
     },
     async onSearchSubmit(q, c) {
       this.$router.push({ name: 'search', query: { q, c, page: 0 } })
@@ -161,6 +173,7 @@ export default {
     await this.fetchAnswers();
   },
   components: {
+    SyncLoader,
     CategoryTag,
     SearchInput
   },
@@ -214,6 +227,15 @@ export default {
 
 .karma {
   font-size: .8em;
+}
+
+.spinner {
+  margin-top: 100px;
+  text-align: center;
+}
+
+.no-results {
+  text-align: center;
 }
 
 /* navbar */
