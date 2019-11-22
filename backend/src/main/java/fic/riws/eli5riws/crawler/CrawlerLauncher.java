@@ -15,8 +15,8 @@ public class CrawlerLauncher {
 
         CrawlConfig config = new CrawlConfig();
         config.setCrawlStorageFolder(crawlStorageFolder);
-        config.setMaxDepthOfCrawling(4);
-        config.setMaxPagesToFetch(800);
+        config.setMaxDepthOfCrawling(-1);
+        config.setMaxPagesToFetch(2000);
         config.setUserAgentString("Subdesarrolladores");
 
         // Instantiate the controller for this crawl.
