@@ -1,3 +1,11 @@
+# Eli5 - Explain  Like I'm Five
+
+Se trata de una aplicación web que permite crawlear y buscar sobre http://reddit.com/r/explainlikeimfive, parseando las preguntas y respuestas e indexándolas en una instancia de Elasticsearch.
+
+Esta aplicación fue desarrollada como proyecto para la asignatura Recuperación de Información y Web Semántica del Master Universitario en Ingeniería Informática (MUEI).
+
+Se pueden consultar detalles sobre las tecnologías usadas y detalles de diseño e implementación en la [memoria realizada](docs/Explain_Like_I_m_Five.pdf)
+
 ## Manual de usuario
 
 ### Instalación y desarrollo
